@@ -2,24 +2,31 @@
 Run a heads-up Texas Hold'em match between two agents.
 
 Usage examples:
-    python main.py                        # tight vs aggressive, 10 hands
-    python main.py --hands 50             # 50-hand match
-    python main.py --a1 human --a2 tight  # human vs tight agent
+    python main.py                         # tight vs aggressive, 10 hands
+    python main.py --hands 50              # 50-hand match
+    python main.py --a1 human --a2 tight   # human vs tight agent
+    python main.py --a1 gto --a2 tight     # GTO vs tight (requires trained strategy)
     python main.py --a1 random --a2 call_station --hands 100
 
-Available agents: random, call_station, tight, aggressive, human
+Available agents: random, call_station, tight, aggressive, human, gto
+  gto requires:  python rl/train.py   (run once to build strategy.pkl)
 """
 
 import argparse
 from evaluator import Player, GameState
 from agents import random_agent, call_station, tight_agent, aggressive_agent, human_agent
 
+def _gto_agent(player, opponent, board, pot, to_call):
+    from rl.gto_agent import gto_agent_0
+    return gto_agent_0(player, opponent, board, pot, to_call)
+
 AGENT_MAP = {
-    "random": random_agent,
+    "random":       random_agent,
     "call_station": call_station,
-    "tight": tight_agent,
-    "aggressive": aggressive_agent,
-    "human": human_agent,
+    "tight":        tight_agent,
+    "aggressive":   aggressive_agent,
+    "human":        human_agent,
+    "gto":          _gto_agent,
 }
 
 
